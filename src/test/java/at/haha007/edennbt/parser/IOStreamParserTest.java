@@ -8,6 +8,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.logging.Logger;
 
 
 class IOStreamParserTest {
@@ -60,6 +61,7 @@ class IOStreamParserTest {
         IOStreamParser parser = new IOStreamParser();
         //noinspection resource
         byte[] bytes = ((ByteArrayOutputStream) parser.write(list)).toByteArray();
+        System.out.println(toHexString(bytes));
         Assertions.assertEquals(list, parser.read(new ByteArrayInputStream(bytes)));
     }
 

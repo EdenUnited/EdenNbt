@@ -1,6 +1,7 @@
 package at.haha007.edennbt.element;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
 
@@ -8,9 +9,10 @@ import java.util.*;
 
 @ToString
 @Getter
+@NoArgsConstructor
 public class NbtList<T extends NbtElement> extends NbtElement implements List<T> {
     private final List<T> elements = new ArrayList<>();
-    private final Class<T> clazz;
+    private Class<T> clazz = null;
 
     public NbtList(Class<T> clazz) {
         this.clazz = clazz;
@@ -178,8 +180,17 @@ public class NbtList<T extends NbtElement> extends NbtElement implements List<T>
     private void checkType(Object o) {
         if (o == null)
             throw new NullPointerException("NbtList can only handle non-null elements.");
+        if (!(o instanceof NbtElement))
+            throw new IllegalArgumentException("NbtList can only handle NbtElements. Provided: "
+                    + o.getClass().getCanonicalName());
+        if (clazz == null) {
+            //noinspection unchecked
+            clazz = (Class<T>) o.getClass();
+            return;
+        }
         if (o.getClass() != clazz)
             throw new ClassCastException("NbtList can only handle elements of type " + clazz.getCanonicalName() +
                     ". Provided: " + o.getClass().getCanonicalName());
+
     }
 }

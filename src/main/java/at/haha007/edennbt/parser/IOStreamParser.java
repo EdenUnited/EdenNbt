@@ -1,7 +1,6 @@
 package at.haha007.edennbt.parser;
 
 import at.haha007.edennbt.element.*;
-import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
 import java.io.ByteArrayOutputStream;
@@ -10,7 +9,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Haha007
@@ -61,10 +63,7 @@ public class IOStreamParser implements NbtParser<OutputStream, InputStream> {
         return new NbtWriter().write(input);
     }
 
-    @RequiredArgsConstructor
-    private static class NbtReader {
-        private final InputStream is;
-
+    private record NbtReader(InputStream is) {
         @SneakyThrows
         public NbtElement read() {
             ElementType type = getType(is.readNBytes(1)[0]);
