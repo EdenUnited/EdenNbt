@@ -63,10 +63,10 @@ public class SnbtParser implements NbtParser<String, String> {
             case INT_ARRAY -> {
                 StringBuilder sb = new StringBuilder();
                 sb.append("[I;");
-                NbtByteArray array = (NbtByteArray) input;
+                NbtIntArray array = (NbtIntArray) input;
                 StringJoiner stringJoiner = new StringJoiner(",", "", "");
-                for (byte b : array.getValue()) {
-                    stringJoiner.add(Byte.toString(b));
+                for (int b : array.getValue()) {
+                    stringJoiner.add(Integer.toString(b));
                 }
                 sb.append(stringJoiner);
                 sb.append("]");
@@ -75,10 +75,10 @@ public class SnbtParser implements NbtParser<String, String> {
             case LONG_ARRAY -> {
                 StringBuilder sb = new StringBuilder();
                 sb.append("[L;");
-                NbtByteArray array = (NbtByteArray) input;
+                NbtLongArray array = (NbtLongArray) input;
                 StringJoiner stringJoiner = new StringJoiner(",", "", "");
-                for (byte b : array.getValue()) {
-                    stringJoiner.add(Byte.toString(b));
+                for (long b : array.getValue()) {
+                    stringJoiner.add(Long.toString(b));
                 }
                 sb.append(stringJoiner);
                 sb.append("]");
@@ -172,6 +172,9 @@ public class SnbtParser implements NbtParser<String, String> {
                 return new NbtDouble(Double.parseDouble(num));
             }
             position--;
+            if (num.contains(".")) {
+                return new NbtDouble(Double.parseDouble(num));
+            }
             return new NbtInt(Integer.parseInt(num));
         }
 
@@ -189,11 +192,13 @@ public class SnbtParser implements NbtParser<String, String> {
                 if (currentChar == '}') {
                     position++;
                     return compund;
+                } else if (currentChar == ',') {
+                    position++;
                 }
                 String key = readString().getValue();
                 currentChar = input.charAt(position);
                 if (currentChar != ':') {
-                    throw new ParseException("missing ':' after key " + key, position);
+                    throw new ParseException("missing ':' after key " + key + " at position " + position, position);
                 }
                 position++;
                 NbtElement value = read();
@@ -335,6 +340,8 @@ public class SnbtParser implements NbtParser<String, String> {
                 if (currentChar == ']') {
                     position++;
                     break;
+                } else if (currentChar == ',') {
+                    position++;
                 }
                 String num = readNum();
                 longs.add(Long.parseLong(num));
@@ -361,6 +368,8 @@ public class SnbtParser implements NbtParser<String, String> {
                 if (currentChar == ']') {
                     position++;
                     break;
+                } else if (currentChar == ',') {
+                    position++;
                 }
                 String num = readNum();
                 ints.add(Integer.parseInt(num));
@@ -388,6 +397,8 @@ public class SnbtParser implements NbtParser<String, String> {
                 if (currentChar == ']') {
                     position++;
                     break;
+                } else if (currentChar == ',') {
+                    position++;
                 }
                 String num = readNum();
                 bytes.add(Byte.parseByte(num));
